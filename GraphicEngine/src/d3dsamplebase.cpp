@@ -48,6 +48,11 @@ bool D3DSampleBase::InitMainWindow()
 	return true;
 }
 
+void Graphic::D3DSampleBase::SetFullscreenModel()
+{
+
+}
+
 void Graphic::D3DSampleBase::WindowResize(int width, int height)
 {
 

@@ -6,10 +6,12 @@
 #endif
 #include <windows.h>
 
+
 namespace Graphic
 {
 	class NativeAppbase
 	{
+	public:
 		virtual void Update() = 0;
 		virtual void Render() = 0;
 		virtual void Present() = 0;
@@ -23,6 +25,8 @@ namespace Graphic
 			return 0;
 		}
 	};
+
+	extern NativeAppbase* CreateApplication();
 }
 
 #endif

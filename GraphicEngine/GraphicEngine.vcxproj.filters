@@ -30,6 +30,9 @@
     <ClCompile Include="src\winwrapper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\d3dsamplewin.cpp">
+      <Filter>d3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -50,6 +53,12 @@
       <Filter>d3d</Filter>
     </ClInclude>
     <ClInclude Include="src\d3dutil.h">
+      <Filter>d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\d3dsamplewin.h">
+      <Filter>d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\win32nativewindow.h">
       <Filter>d3d</Filter>
     </ClInclude>
   </ItemGroup>
