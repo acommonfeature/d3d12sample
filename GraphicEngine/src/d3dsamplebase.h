@@ -46,11 +46,15 @@ protected:
 	//virtual void OnMouseMove(WPARAM btnState, int x, int y);
 protected:
 	bool InitDirect3D();
-	//void CreateCommandObjects();
-	//void CreateSawpChain();
-	//void FlushCommandQueue();
+	void CreateCommandObjects();
+	void CreateSawpChain();
+	void FlushCommandQueue();
+	virtual void CreateRtvAndDsvDescriptorHeaps();
 
 protected:
+	bool m4xMsaaState = false;
+	UINT m4xMsaaQuality = 0;
+
 	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
 	Microsoft::WRL::ComPtr<ID3D12Device> d3dDevice;
@@ -59,6 +63,7 @@ protected:
 	UINT64 currentFence = 0;
 
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> directCmdListAlloc;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	static const int SwapChainBufferCount = 2;
@@ -75,7 +80,7 @@ protected:
 
 	UINT rtvDescriptorSize = 0;
 	UINT dsvDescriptorSize = 0;
-	UINT mCbvSrvUavDescriptorSize = 0;
+	UINT cbvSrvUavDescriptorSize = 0;
 
 	std::wstring mainWindowCaption = L"D3D App Tjy";
 	D3D_DRIVER_TYPE d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
@@ -83,7 +88,7 @@ protected:
 	DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	int clientWidth = 800;
-	int clinetHeight = 600;
+	int clientHeight = 600;
 };
 
 GRAPHIC_END_NAMESPACE
