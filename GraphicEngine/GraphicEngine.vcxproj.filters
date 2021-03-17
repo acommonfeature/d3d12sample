@@ -27,6 +27,9 @@
     <ClCompile Include="src\nativeappbase.cpp">
       <Filter>d3d</Filter>
     </ClCompile>
+    <ClCompile Include="src\winwrapper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

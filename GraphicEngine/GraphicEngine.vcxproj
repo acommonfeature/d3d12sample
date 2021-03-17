@@ -154,6 +154,7 @@
     <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="src\d3dsamplebase.cpp" />
     <ClCompile Include="src\nativeappbase.cpp" />
+    <ClCompile Include="src\winwrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="GraphicEngine.ico" />

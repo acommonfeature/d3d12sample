@@ -89,6 +89,7 @@ protected:
 
 	int clientWidth = 800;
 	int clientHeight = 600;
+
 };
 
 GRAPHIC_END_NAMESPACE
