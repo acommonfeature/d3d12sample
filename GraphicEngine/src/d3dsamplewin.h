@@ -134,6 +134,12 @@ protected:
 	bool fullScreenWindow = false;
 	HWND m_hWnd = 0;
 
+public:
+	virtual bool Initialize(const Win32NativeWindow* window);
+	virtual void OnResize() override;
+	virtual void Update();
+	virtual void Render();
+
 private:
 	RECT windowRect = {};
 	LONG windowStyle = 0;

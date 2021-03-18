@@ -55,6 +55,10 @@ protected:
 	void FlushCommandQueue();
 	virtual void CreateRtvAndDsvDescriptorHeaps();
 
+	ID3D12Resource* CurrentBackBuffer() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const;
+	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const;
+
 protected:
 	bool m4xMsaaState = false;
 	UINT m4xMsaaQuality = 0;
