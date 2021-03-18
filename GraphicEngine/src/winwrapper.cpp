@@ -44,7 +44,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	RECT rc = { 0, 0, windowWidth, windowHeight };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false);
 
-	HWND wnd = CreateWindow( L"SampleApp", L"d3d app",
+	HWND wnd = CreateWindow( L"SampleApp", L"DX12 Sample By Tang",
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		rc.right - rc.left, rc.bottom - rc.top, 0, 0, hInstance, 0);
 
