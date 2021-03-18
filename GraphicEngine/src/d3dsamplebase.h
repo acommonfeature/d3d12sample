@@ -3,12 +3,14 @@
 
 #include "commondefinitions.h"
 #include <windows.h>
+#include <string>
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include "nativeappbase.h"
-#include <string>
+#include "win32nativewindow.h"
+
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -28,7 +30,7 @@ protected:
 	bool resizing = false;
 	bool fullScreenState = false;
 public:
-	virtual bool Initialize();
+	virtual bool Initialize(const Win32NativeWindow* outWindow);
 	 
 	//int Run();
 
@@ -47,9 +49,9 @@ protected:
 	//virtual void OnMouseUp(WPARAM btnState, int x, int y);
 	//virtual void OnMouseMove(WPARAM btnState, int x, int y);
 protected:
-	bool InitDirect3D();
+	bool InitDirect3D(const Win32NativeWindow& outWindow);
 	void CreateCommandObjects();
-	void CreateSawpChain();
+	void CreateSawpChain(const Win32NativeWindow& outWindow);
 	void FlushCommandQueue();
 	virtual void CreateRtvAndDsvDescriptorHeaps();
 
@@ -86,7 +88,7 @@ protected:
 
 	std::wstring mainWindowCaption = L"D3D App Tjy";
 	D3D_DRIVER_TYPE d3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
-	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_SNORM;
+	DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	int clientWidth = 800;

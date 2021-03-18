@@ -17,12 +17,12 @@ D3DSampleBase::~D3DSampleBase()
 
 }
 
-bool D3DSampleBase::Initialize()
+bool D3DSampleBase::Initialize(const Win32NativeWindow* outWindow)
 {
-	if (!InitMainWindow())
-		return false;
+	//if (!InitMainWindow())
+	//	return false;
 
-	if (!InitDirect3D())
+	if (!InitDirect3D(*outWindow))
 		return false;
 	
 	OnResize();
@@ -73,7 +73,7 @@ void Graphic::D3DSampleBase::Update()
 
 }
 
-bool Graphic::D3DSampleBase::InitDirect3D()
+bool Graphic::D3DSampleBase::InitDirect3D(const Win32NativeWindow& outWindow)
 {
 #if defined(DEBUG) || defined(_DEBUG)
 	{
@@ -125,7 +125,7 @@ bool Graphic::D3DSampleBase::InitDirect3D()
 #endif
 
 	CreateCommandObjects();
-	CreateSawpChain();
+	CreateSawpChain(outWindow);
 	CreateRtvAndDsvDescriptorHeaps();
 
 	return true;
@@ -148,7 +148,7 @@ void Graphic::D3DSampleBase::FlushCommandQueue()
 	}
 }
 
-void Graphic::D3DSampleBase::CreateSawpChain()
+void Graphic::D3DSampleBase::CreateSawpChain(const Win32NativeWindow& outWindow)
 {
 	swapChain.Reset();
 
@@ -164,7 +164,7 @@ void Graphic::D3DSampleBase::CreateSawpChain()
 	scdesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 	scdesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scdesc.BufferCount = SwapChainBufferCount;
-	//scdesc.OutputWindow = 
+	scdesc.OutputWindow = reinterpret_cast<HWND>(outWindow.hWnd);
 	scdesc.Windowed = true;
 	scdesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	scdesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;

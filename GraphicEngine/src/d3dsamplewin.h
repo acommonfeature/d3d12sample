@@ -54,7 +54,7 @@ public:
 		try
 		{
 			Win32NativeWindow window{ hWnd };
-			Initialize();
+			Initialize(&window);
 		}
 		catch (const std::exception&)
 		{
