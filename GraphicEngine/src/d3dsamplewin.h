@@ -1,11 +1,29 @@
 #ifndef _D3D_SAMPLE_WIN_H_
 #define _D3D_SAMPLE_WIN_H_
 
+#include <memory>
+#include <vector>
 #include "d3dsamplebase.h"
 #include "win32nativewindow.h"
 #include "nativeappbase.h"
+#include "UploadBuffer.h"
+#include <MathHelper.h>
+
+using namespace std;
+using namespace DirectX;
 
 GRAPHIC_BEGIN_NAMESPACE(Graphic)
+
+struct Vertex
+{
+	DirectX::XMFLOAT3 Pos;
+	DirectX::XMFLOAT4 Color;
+};
+
+struct ObjectConstants
+{
+	DirectX::XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+};
 
 class D3DSampleWin final : public D3DSampleBase
 {
@@ -140,9 +158,44 @@ public:
 	virtual void Update();
 	virtual void Render();
 
+public:
+	void BuildDescriptorHeaps();
+	void BuildConstantBuffers();
+	void BuildRootSignature();
+	void BuildShadersAndInputLayout();
+	void BuildBoxGeometry();
+	void BuildPSO();
+
+
 private:
 	RECT windowRect = {};
 	LONG windowStyle = 0;
+
+private:
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> cbvHeap = nullptr;
+
+	std::unique_ptr<UploadBuffer<ObjectConstants>> objectCB = nullptr;
+
+	unique_ptr<MeshGeometry> boxGeo = nullptr;
+
+	Microsoft::WRL::ComPtr<ID3DBlob> vsByteCode = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> psByteCode = nullptr;
+
+	vector<D3D12_INPUT_ELEMENT_DESC> inputLayout;
+
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> pso = nullptr;
+
+	XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float theta = 1.5f * XM_PI;
+	float phi = XM_PIDIV4;
+	float radius = 5.0f;
+
+	POINT lastMousePos;
+
 };
 
 

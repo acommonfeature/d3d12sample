@@ -16,6 +16,9 @@
     <Filter Include="d3d">
       <UniqueIdentifier>{a5055d50-aae7-472d-801a-8f55bb4254de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{282fb116-e283-41c9-beff-2ddc880c94c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphicEngine.cpp">
@@ -32,6 +35,15 @@
     </ClCompile>
     <ClCompile Include="src\d3dsamplewin.cpp">
       <Filter>d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\d3dUtil.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\DDSTextureLoader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MathHelper.cpp">
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,14 +64,31 @@
     <ClInclude Include="src\nativeappbase.h">
       <Filter>d3d</Filter>
     </ClInclude>
-    <ClInclude Include="src\d3dutil.h">
-      <Filter>d3d</Filter>
-    </ClInclude>
     <ClInclude Include="src\d3dsamplewin.h">
       <Filter>d3d</Filter>
     </ClInclude>
     <ClInclude Include="src\win32nativewindow.h">
       <Filter>d3d</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\d3dUtil.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\d3dx12.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\DDSTextureLoader.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MathHelper.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\UploadBuffer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\color.hlsl">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

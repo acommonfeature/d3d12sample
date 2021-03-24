@@ -152,6 +152,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\d3dUtil.cpp" />
+    <ClCompile Include="..\common\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\common\MathHelper.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="src\d3dsamplebase.cpp" />
     <ClCompile Include="src\d3dsamplewin.cpp" />
@@ -163,12 +166,21 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\d3dUtil.h" />
+    <ClInclude Include="..\common\d3dx12.h" />
+    <ClInclude Include="..\common\DDSTextureLoader.h" />
+    <ClInclude Include="..\common\MathHelper.h" />
+    <ClInclude Include="..\common\UploadBuffer.h" />
     <ClInclude Include="src\commondefinitions.h" />
     <ClInclude Include="src\d3dsamplebase.h" />
     <ClInclude Include="src\d3dsamplewin.h" />
-    <ClInclude Include="src\d3dutil.h" />
     <ClInclude Include="src\nativeappbase.h" />
     <ClInclude Include="src\win32nativewindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\color.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

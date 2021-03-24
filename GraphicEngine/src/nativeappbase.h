@@ -20,7 +20,7 @@ namespace Graphic
 		//Called by the framework after the window has been created.
 		virtual void OnWindowCreated(HWND hWnd, LONG WindowWidth, LONG WindowHeight) = 0;
 
-		//Handle Wind32 message
+		//Handle Win32 message
 		virtual LRESULT HandleWin32Message(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			return 0;
