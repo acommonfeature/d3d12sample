@@ -82,6 +82,11 @@ void D3DSampleBase::Present()
 
 }
 
+float Graphic::D3DSampleBase::AspectRatio() const
+{
+	return static_cast<float>(clientWidth / clientHeight);
+}
+
 void D3DSampleBase::Render()
 {
 

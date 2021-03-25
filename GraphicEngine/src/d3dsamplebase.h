@@ -41,6 +41,7 @@ protected:
 	virtual void Update();
 	virtual void Render();
 	virtual void Present();
+	float AspectRatio() const;
 	virtual void WindowResize(int width, int height);
 
 	virtual void SetFullscreenModel();

@@ -121,6 +121,8 @@ LRESULT CALLBACK MessageProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lPara
 		lpMMI->ptMinTrackSize.y = 240;
 		return 0;
 	}
+	case WM_MOUSEMOVE:
+		g_pTheApp->OnMouseMove();
 	default:
 		return DefWindowProc(wnd, message, wParam, lParam);
 	}

@@ -37,44 +37,109 @@ namespace Graphic
 	void D3DSampleWin::OnResize()
 	{
 		D3DSampleBase::OnResize();
+
+		//window resized .update project matrix
+		XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+		XMStoreFloat4x4(&mProj, P);
 	}
 
 	void D3DSampleWin::Update()
 	{
+		const float x = radius * sinf(phi) * cosf(theta);
+		const float z = radius * sinf(phi) * sinf(theta);
+		const float y = radius * cosf(phi);
+
+		XMVECTOR pos = XMVectorSet(x, y, z, 1.0);
+		XMVECTOR target = XMVectorZero();
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0, 0.0);
+
+		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+		XMStoreFloat4x4(&mView, view);
+
+		XMMATRIX world = XMLoadFloat4x4(&mWorld);
+		XMMATRIX proj = XMLoadFloat4x4(&mProj);
+		auto worldViewProj = world * view * proj;
+
+		ObjectConstants objConst;
+		XMStoreFloat4x4(&objConst.WorldViewProj, XMMatrixTranspose(worldViewProj));
+
+		objectCB->CopyData(0, objConst);
 
 	}
 
 	void D3DSampleWin::Render()
 	{
+		//ThrowIfFailed(directCmdListAlloc->Reset());
+
+		//ThrowIfFailed(commandList->Reset(directCmdListAlloc.Get(), nullptr));
+
+		//commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		//	D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		//commandList->RSSetViewports(1, &screenViewport);
+		//commandList->RSSetScissorRects(1, &scissorRect);
+
+		////clear back buffer and depth buffer
+		//const float color[] = { 0.690196097f, 0.768627524f, 0.870588303f, 1.000000000f };
+		//commandList->ClearRenderTargetView(CurrentBackBufferView(), &color[0], 0, nullptr);
+		//commandList->ClearDepthStencilView(DepthStencilView(),
+		//	D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0, 0, 0, nullptr);
+
+		////指定渲染目标
+		//commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+		////状态切换
+		//commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		//	D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		////Done recording commands
+		//ThrowIfFailed(commandList->Close());
+
+		//ID3D12CommandList* cmdlists[] = { commandList.Get() };
+		//commandQueue->ExecuteCommandLists(_countof(cmdlists), cmdlists);
+		////swap
+		//ThrowIfFailed(swapChain->Present(0, 0));
+		//CurrBackBuffer = (CurrBackBuffer + 1) % SwapChainBufferCount;
+
+		//FlushCommandQueue();
+
 		ThrowIfFailed(directCmdListAlloc->Reset());
 
-		ThrowIfFailed(commandList->Reset(directCmdListAlloc.Get(), nullptr));
-
-		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		ThrowIfFailed(commandList->Reset(directCmdListAlloc.Get(), pso.Get()));
 
 		commandList->RSSetViewports(1, &screenViewport);
 		commandList->RSSetScissorRects(1, &scissorRect);
 
-		//clear back buffer and depth buffer
-		const float color[] = { 0.690196097f, 0.768627524f, 0.870588303f, 1.000000000f };
-		commandList->ClearRenderTargetView(CurrentBackBufferView(), &color[0], 0, nullptr);
-		commandList->ClearDepthStencilView(DepthStencilView(),
-			D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0, 0, 0, nullptr);
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-		//指定渲染目标
+		commandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
+		commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0, 0, 0, nullptr);
+
 		commandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
-		//状态切换
+
+		ID3D12DescriptorHeap* descriptorHeaps[] = { cbvHeap.Get() };
+		commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+		commandList->SetGraphicsRootSignature(rootSignature.Get());
+
+		commandList->IASetVertexBuffers(0, 1, &boxGeo->VertexBufferView());
+		commandList->IASetIndexBuffer(&boxGeo->IndexBufferView());
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		commandList->SetGraphicsRootDescriptorTable(0, cbvHeap->GetGPUDescriptorHandleForHeapStart());
+
+		commandList->DrawIndexedInstanced(boxGeo->DrawArgs["box"].IndexCount, 1, 0, 0, 0);
+
 		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-		//Done recording commands
 		ThrowIfFailed(commandList->Close());
 
-		ID3D12CommandList* cmdlists[] = { commandList.Get() };
-		commandQueue->ExecuteCommandLists(_countof(cmdlists), cmdlists);
-		//swap
+		ID3D12CommandList* cmdslist[] = { commandList.Get() };
+		commandQueue->ExecuteCommandLists(_countof(cmdslist), cmdslist);
+
 		ThrowIfFailed(swapChain->Present(0, 0));
+
 		CurrBackBuffer = (CurrBackBuffer + 1) % SwapChainBufferCount;
 
 		FlushCommandQueue();
@@ -210,7 +275,7 @@ namespace Graphic
 			commandList.Get(), vertices.data(), vbByteSize, boxGeo->VertexBufferUploader);
 
 		boxGeo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(d3dDevice.Get(),
-			commandList.Get(), indices.data(), ibByteSize, boxGeo->IndexBufferGPU);
+			commandList.Get(), indices.data(), ibByteSize, boxGeo->IndexBufferUploader);
 
 		boxGeo->VertexByteStride = sizeof(Vertex);
 		boxGeo->VertexBufferByteSize = vbByteSize;
