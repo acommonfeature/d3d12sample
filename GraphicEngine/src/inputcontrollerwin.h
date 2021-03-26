@@ -9,6 +9,11 @@ namespace Graphic
 	{
 	public:
 		InputControllerWin();
+		bool HandleNativeMessage(const void* MsgData) override;
+
+		const MouseState& GetMouseState();
+	private:
+		void UpdateMousePos();
 	};
 }
 #endif

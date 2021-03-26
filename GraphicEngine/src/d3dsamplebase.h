@@ -3,6 +3,7 @@
 
 #include "commondefinitions.h"
 #include <windows.h>
+#include <memory>
 #include <string>
 #include <wrl.h>
 #include <dxgi1_4.h>
@@ -10,6 +11,7 @@
 #include <d3dcompiler.h>
 #include "nativeappbase.h"
 #include "win32nativewindow.h"
+#include "inputcontrollerbase.h"
 
 
 #pragma comment(lib,"d3dcompiler.lib")
@@ -86,6 +88,8 @@ protected:
 
 	D3D12_VIEWPORT screenViewport;
 	D3D12_RECT scissorRect;
+
+	std::unique_ptr<InputControllerBase> inputController = nullptr;
 
 	UINT rtvDescriptorSize = 0;
 	UINT dsvDescriptorSize = 0;

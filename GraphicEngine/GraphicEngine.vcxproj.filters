@@ -45,6 +45,12 @@
     <ClCompile Include="..\common\MathHelper.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="src\inputcontrollerbase.cpp">
+      <Filter>d3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\inputcontrollerwin.cpp">
+      <Filter>d3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -83,6 +89,15 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\common\UploadBuffer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputcontrollerbase.h">
+      <Filter>d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inputcontrollerwin.h">
+      <Filter>d3d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\BasicMath.hpp">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

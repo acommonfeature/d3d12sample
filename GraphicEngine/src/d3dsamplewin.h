@@ -8,6 +8,9 @@
 #include "nativeappbase.h"
 #include "UploadBuffer.h"
 #include <MathHelper.h>
+#include "BasicMath.hpp"
+#include "inputcontrollerwin.h"
+
 
 using namespace std;
 using namespace DirectX;
@@ -27,6 +30,15 @@ struct ObjectConstants
 
 class D3DSampleWin final : public D3DSampleBase
 {
+public:
+	D3DSampleWin()
+	{
+		inputController = make_unique<InputControllerWin>();
+	}
+	virtual~D3DSampleWin()
+	{
+
+	}
 public:
 	virtual LRESULT HandleWin32Message(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -60,9 +72,13 @@ public:
 			WPARAM wParam;
 			LPARAM lParam;
 		}MsgData = { hWnd, message, wParam, lParam };
-		
-		//TODO:
 
+		if (inputController)
+		{
+			inputController->HandleNativeMessage(&MsgData);
+		}
+	
+		return false;
 	}
 
 	virtual void OnWindowCreated(HWND hWnd, LONG WindowWidth, LONG WindowHeight)
@@ -76,7 +92,7 @@ public:
 		}
 		catch (const std::exception&)
 		{
-			//LOG_ERROR("Failed to initialize Diligent Engine.");
+			//LOG_ERROR("Failed to initialize Graphic Engine.");
 		}
 	}
 
@@ -196,6 +212,13 @@ private:
 
 	POINT lastMousePos;
 
+	MouseState lastMouseState;
+	float cameraDist = 8.0f;
+	float cameraYaw = 0;
+	float cameraPitch = 0;
+
+	Quaternion cameraRotation = { 0, 0,0,1 };
+	Quaternion modelRotation = Quaternion::RotationFromAxisAngle(float3{ 0.f, 1.0f, 0.0f }, -PI_F / 2.f);
 };
 
 

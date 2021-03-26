@@ -2,6 +2,7 @@
 #define _INPUT_CONTROLLER_BASE_
 
 #include <stdint.h>
+#include <type_traits> 
 
 template<typename EnumType>
 using _UNDERLYING_ENUM_T = typename std::underlying_type<EnumType>::type;
@@ -31,7 +32,7 @@ namespace Graphic
 		};
 
 		float PosX = -1;
-		float PoxY = -1;
+		float PosY = -1;
 		BUTTON_FLAGS ButtonFlags = BUTTON_FLAG_NONE;
 		float WheelDelta = 0;
 	};
@@ -39,10 +40,10 @@ namespace Graphic
 
 	enum class InputKeys
 	{
-		Unknow = 0,
+		Unknown = 0,
 		MoveLeft,
 		MoveRight,
-		MoveForwad,
+		MoveForward,
 		MoveBackward,
 		MoveUp,
 		MoveDown,
@@ -66,6 +67,11 @@ namespace Graphic
 	class InputControllerBase
 	{
 	public:
+		virtual bool HandleNativeMessage(const void* MsgData)
+		{
+			return false;
+		}
+
 		const MouseState& GetMouseState() const 
 		{
 			return mouseState;

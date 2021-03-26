@@ -43,8 +43,69 @@ namespace Graphic
 		XMStoreFloat4x4(&mProj, P);
 	}
 
+	//int delte = 5;
+
 	void D3DSampleWin::Update()
 	{
+		//update camera
+		const auto& mouseState = inputController->GetMouseState();
+		float mouseDeltaX = 0;
+		float mouseDeltaY = 0;
+		if (lastMouseState.PosX >= 0 && lastMouseState.PosY >=0 && 
+			lastMouseState.ButtonFlags != MouseState::BUTTON_FLAG_NONE )
+		{
+			mouseDeltaX = mouseState.PosX - lastMouseState.PosX;
+			mouseDeltaY = mouseState.PosY - lastMouseState.PosY;
+		}
+
+		if (mouseDeltaX != 0 || mouseDeltaY != 0)
+		{
+			int kk = 0;
+		}
+
+		lastMouseState = mouseState;
+
+		constexpr float RotationSpeed = 0.005f;
+		float yawDelta = mouseDeltaX * RotationSpeed;
+		float pitchDelta = mouseDeltaY * RotationSpeed;
+
+		if (mouseState.ButtonFlags & MouseState::BUTTON_FLAG_LEFT )
+		{
+			cameraYaw += yawDelta;
+			cameraPitch += pitchDelta;
+			cameraPitch = (std::max)(cameraPitch, -MathHelper::Pi / 2.0f);
+			cameraPitch = (std::min)(cameraPitch, MathHelper::Pi / 2.0f);
+		}
+
+		// Apply extra rotations to adjust the view to match Khronos GLTF viewer
+		cameraRotation =
+			Quaternion::RotationFromAxisAngle(float3{ 1, 0, 0 }, -cameraPitch) *
+			Quaternion::RotationFromAxisAngle(float3{ 0, 1, 0 }, -cameraPitch) *
+			Quaternion::RotationFromAxisAngle(float3{ 0.75f, 0.0f, 0.75f }, PI_F);
+
+		if (mouseState.ButtonFlags & MouseState::BUTTON_FLAG_RIGHT)
+		{
+			auto CameraView = cameraRotation.ToMatrix();
+			auto CameraWorld = CameraView.Transpose();
+
+			float3 CameraRight = float3::MakeVector(CameraWorld[0]);
+			float3 CameraUp = float3::MakeVector(CameraWorld[1]);
+			modelRotation =
+				Quaternion::RotationFromAxisAngle(CameraRight, -pitchDelta) *
+				Quaternion::RotationFromAxisAngle(CameraUp, -yawDelta) *
+				modelRotation;
+		}
+
+		cameraDist -= mouseState.WheelDelta * 0.25f;
+		//cameraDist = clamp(cameraDist, 0.1f, 5.f);
+
+		float4x4 cameraView = cameraRotation.ToMatrix() * float4x4::Translation(0.f, 0.0f, cameraDist);
+
+		mView = XMFLOAT4X4( cameraView.m00, cameraView.m01, cameraView.m02, cameraView.m03,
+							cameraView.m10, cameraView.m11, cameraView.m12, cameraView.m13, 
+							cameraView.m20, cameraView.m21, cameraView.m22, cameraView.m23, 
+							cameraView.m30, cameraView.m31, cameraView.m32, cameraView.m33);
+		//update matrix
 		const float x = radius * sinf(phi) * cosf(theta);
 		const float z = radius * sinf(phi) * sinf(theta);
 		const float y = radius * cosf(phi);
@@ -54,17 +115,20 @@ namespace Graphic
 		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0, 0.0);
 
 		XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-		XMStoreFloat4x4(&mView, view);
+		//XMStoreFloat4x4(&mView, view);
 
 		XMMATRIX world = XMLoadFloat4x4(&mWorld);
 		XMMATRIX proj = XMLoadFloat4x4(&mProj);
+		view = XMLoadFloat4x4(&mView);
 		auto worldViewProj = world * view * proj;
 
 		ObjectConstants objConst;
 		XMStoreFloat4x4(&objConst.WorldViewProj, XMMatrixTranspose(worldViewProj));
 
 		objectCB->CopyData(0, objConst);
+		//mouseState.WheelDelta = 0;
 
+		inputController->ClearState();
 	}
 
 	void D3DSampleWin::Render()

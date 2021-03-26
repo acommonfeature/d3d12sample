@@ -54,10 +54,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		return 1;
 	}
 
+	g_pTheApp->OnWindowCreated(wnd, windowWidth, windowHeight);
+
 	ShowWindow(wnd, nShowCmd);
 	UpdateWindow(wnd);
 
-	g_pTheApp->OnWindowCreated(wnd, windowWidth, windowHeight);
+	
 
 	MSG msg = { 0 };
 
@@ -86,12 +88,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 LRESULT CALLBACK MessageProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//if (g_pTheApp)
-	//{
-	//	auto res = g_pTheApp->HandleWin32Message(wnd, message, wParam, lParam);
-	//	if (res != 0)
-	//		return res;
-	//}
+	if (g_pTheApp)
+	{
+		auto res = g_pTheApp->HandleWin32Message(wnd, message, wParam, lParam);
+		if (res != 0)
+			return res;
+	}
 
 	switch (message)
 	{
@@ -121,8 +123,8 @@ LRESULT CALLBACK MessageProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lPara
 		lpMMI->ptMinTrackSize.y = 240;
 		return 0;
 	}
-	case WM_MOUSEMOVE:
-		g_pTheApp->OnMouseMove();
+	//case WM_MOUSEMOVE:
+		//g_pTheApp->OnMouseMove();
 	default:
 		return DefWindowProc(wnd, message, wParam, lParam);
 	}
