@@ -73,14 +73,14 @@ namespace Graphic
 		{
 			cameraYaw += yawDelta;
 			cameraPitch += pitchDelta;
-			cameraPitch = (std::max)(cameraPitch, -MathHelper::Pi / 2.0f);
-			cameraPitch = (std::min)(cameraPitch, MathHelper::Pi / 2.0f);
+			//cameraPitch = (std::max)(cameraPitch, -MathHelper::Pi / 2.0f);
+			//cameraPitch = (std::min)(cameraPitch, MathHelper::Pi / 2.0f);
 		}
 
 		// Apply extra rotations to adjust the view to match Khronos GLTF viewer
 		cameraRotation =
 			Quaternion::RotationFromAxisAngle(float3{ 1, 0, 0 }, -cameraPitch) *
-			Quaternion::RotationFromAxisAngle(float3{ 0, 1, 0 }, -cameraPitch) *
+			Quaternion::RotationFromAxisAngle(float3{ 0, 1, 0 }, -cameraYaw) *
 			Quaternion::RotationFromAxisAngle(float3{ 0.75f, 0.0f, 0.75f }, PI_F);
 
 		if (mouseState.ButtonFlags & MouseState::BUTTON_FLAG_RIGHT)
