@@ -74,7 +74,9 @@ void D3DSampleBase::SetFullscreenModel()
 
 void Graphic::D3DSampleBase::WindowResize(int width, int height)
 {
-
+	clientHeight = height;
+	clientWidth = width;
+	OnResize();
 }
 
 void D3DSampleBase::Present()
