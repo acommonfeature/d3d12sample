@@ -127,6 +127,7 @@ bool D3DSampleBase::InitDirect3D(const Win32NativeWindow& outWindow)
 			IID_PPV_ARGS(&d3dDevice)));
 	}
 
+
 	ThrowIfFailed(d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
 
 	rtvDescriptorSize = d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
