@@ -158,21 +158,27 @@ bool D3DSampleBase::InitDirect3D(const Win32NativeWindow& outWindow)
 	return true;
 }
 
-void D3DSampleBase::FlushCommandQueue()
+void D3DSampleBase::CreateCommandObjects()
 {
-	// Advance the fence value to mark commands up to this fence point.
-	currentFence++;
+	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
+	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	ThrowIfFailed(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
 
-	ThrowIfFailed(commandQueue->Signal(fence.Get(), currentFence));
+	ThrowIfFailed(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(directCmdListAlloc.GetAddressOf())));
 
-	if ( fence->GetCompletedValue() < currentFence )
-	{
-		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+	ThrowIfFailed(d3dDevice->CreateCommandList(0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		directCmdListAlloc.Get(),
+		nullptr,
+		IID_PPV_ARGS(commandList.GetAddressOf())));
 
-		ThrowIfFailed(fence->SetEventOnCompletion(currentFence, eventHandle));
-		WaitForSingleObject(eventHandle, INFINITE);
-		CloseHandle(eventHandle);
-	}
+	// Start off in a closed state.  This is because the first time we refer 
+	// to the command list we will Reset it, and it needs to be closed before
+	// calling Reset.
+	//初始化时是关闭状态。 在reset()之前需要先关闭
+	commandList->Close();
 }
 
 void D3DSampleBase::CreateSawpChain(const Win32NativeWindow& outWindow)
@@ -202,29 +208,6 @@ void D3DSampleBase::CreateSawpChain(const Win32NativeWindow& outWindow)
 		swapChain.GetAddressOf()));
 }
 
-void D3DSampleBase::CreateCommandObjects()
-{
-	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	ThrowIfFailed(d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&commandQueue)));
-
-	ThrowIfFailed(d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(directCmdListAlloc.GetAddressOf())));
-
-	ThrowIfFailed(d3dDevice->CreateCommandList(0,
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		directCmdListAlloc.Get(),
-		nullptr,
-		IID_PPV_ARGS(commandList.GetAddressOf())));
-
-	// Start off in a closed state.  This is because the first time we refer 
-	// to the command list we will Reset it, and it needs to be closed before
-	// calling Reset.
-	//初始化时是关闭状态。 在reset()之前需要先关闭
-	commandList->Close();
-}
-
 
 void D3DSampleBase::CreateRtvAndDsvDescriptorHeaps()
 {
@@ -244,6 +227,23 @@ void D3DSampleBase::CreateRtvAndDsvDescriptorHeaps()
 
 	ThrowIfFailed(d3dDevice->CreateDescriptorHeap(&dsvHeapDesc,
 		IID_PPV_ARGS(dsvHeap.GetAddressOf())));
+}
+
+void D3DSampleBase::FlushCommandQueue()
+{
+	// Advance the fence value to mark commands up to this fence point.
+	currentFence++;
+
+	ThrowIfFailed(commandQueue->Signal(fence.Get(), currentFence));
+
+	if (fence->GetCompletedValue() < currentFence)
+	{
+		HANDLE eventHandle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+
+		ThrowIfFailed(fence->SetEventOnCompletion(currentFence, eventHandle));
+		WaitForSingleObject(eventHandle, INFINITE);
+		CloseHandle(eventHandle);
+	}
 }
 
 void D3DSampleBase::OnResize()
